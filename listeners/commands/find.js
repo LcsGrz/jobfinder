@@ -14,7 +14,7 @@ module.exports = async ({
     // Incorrect recognition command request
     return ack({
       response_type: "ephemeral",
-      text: `<@${user_id}>El comando no puede funcionar sin keywords.`,
+      text: `<@${user_id}> El comando no puede funcionar sin keywords.`,
     });
 
   // Correct recognition command request
