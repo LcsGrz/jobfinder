@@ -1,4 +1,4 @@
-const { google } = require("../../services");
+const { google, linkedinScraper } = require('../../services');
 
 const GSHEET = `https://docs.google.com/spreadsheets/d/${process.env.G_SHEET_ID}`;
 
@@ -13,7 +13,7 @@ module.exports = async ({
   if (!text)
     // Incorrect recognition command request
     return ack({
-      response_type: "ephemeral",
+      response_type: 'ephemeral',
       text: `<@${user_id}> El comando no puede funcionar sin keywords.`,
     });
 
@@ -21,7 +21,7 @@ module.exports = async ({
   ack();
 
   await respond(
-    `<@${user_id}> empezare con la busqueda, los publicare en el chat...`
+    `<@${user_id}> empezare con la busqueda, los publicare en el chat...`,
   );
 
   const keywords = text
@@ -43,23 +43,29 @@ module.exports = async ({
     })
     .filter(Boolean);
 
-  await google.writeFile({
-    userId: user_id,
-    username: user_name,
-    text: text,
-    formated: formatToWrite(keywords),
-  });
+  linkedinScraper.run(['react nodejs', 'mongodb graphql'], {
+    onData: async (data) => {
+      console.log('\n\n', '# data', data, '\n\n');
+      await google.writeFile({
+        username: user_name,
+        ...data,
+      });
+    },
+    onEnd: async () => {
+      await respond({
+        response_type: 'in_channel',
+        text: `Se buscaron puestos de trabajo con el siguiente predicado '${text}'`,
+      });
 
-  await respond({
-    response_type: "in_channel",
-    text: `Se buscaron puestos de trabajo con el siguiente predicado '${text}'`,
-  });
-  await respond({
-    response_type: "in_channel",
-    text: `✅ Linkedin: se encontraron 666 resultados`,
-  });
-  await respond({
-    response_type: "in_channel",
-    text: `Verifique los resultados desde este enlace: ${GSHEET}`,
+      await respond({
+        response_type: 'in_channel',
+        text: `✅ Linkedin: se encontraron resultados`,
+      });
+
+      await respond({
+        response_type: 'in_channel',
+        text: `Verifique los resultados desde este enlace: ${GSHEET}`,
+      });
+    },
   });
 };

@@ -3,7 +3,7 @@ const {
   relevanceFilter,
   typeFilter,
   remoteFilter,
-  events
+  events,
 } = require("linkedin-jobs-scraper");
 
 const scraper = new LinkedinScraper({
@@ -11,7 +11,7 @@ const scraper = new LinkedinScraper({
   slowMo: 300,
 });
 
-const runScraper = async (
+module.exports.run = async (
   queries,
   { onError, onEnd, onData, onInvalidSession }
 ) => {
@@ -47,5 +47,3 @@ const runScraper = async (
   // Close browser
   await scraper.close();
 };
-
-module.exports.run = runScraper;

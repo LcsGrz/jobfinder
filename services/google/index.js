@@ -1,16 +1,24 @@
-const { google } = require("googleapis");
+const { google } = require('googleapis');
 
 const auth = new google.auth.GoogleAuth({
-  keyFile: "services/google/gkey.json",
+  keyFile: 'services/google/gkey.json',
   // Url to spreadsheets API
-  scopes: "https://www.googleapis.com/auth/spreadsheets",
+  scopes: 'https://www.googleapis.com/auth/spreadsheets',
 });
 
-module.exports.writeFile = async ({ userId, username, text, formated }) => {
+module.exports.writeFile = async ({
+  username,
+  query,
+  link,
+  title,
+  company,
+  descrption,
+  jobDate,
+}) => {
   const authClientObject = await auth.getClient();
 
   const googleSheetsInstance = google.sheets({
-    version: "v4",
+    version: 'v4',
     auth: authClientObject,
   });
 
@@ -35,11 +43,20 @@ module.exports.writeFile = async ({ userId, username, text, formated }) => {
   await googleSheetsInstance.spreadsheets.values.append({
     auth,
     spreadsheetId: process.env.G_SHEET_ID,
-    range: "Sheet1!A:E", //sheet name and range of cells
-    valueInputOption: "USER_ENTERED", // The information will be passed according to what the usere passes in as date, number or text
+    range: 'Sheet1!A:H', //sheet name and range of cells
+    valueInputOption: 'USER_ENTERED', // The information will be passed according to what the usere passes in as date, number or text
     resource: {
       values: [
-        [new Date().toLocaleDateString(), userId, username, text, formated],
+        [
+          new Date().toLocaleDateString(),
+          username,
+          query,
+          company,
+          title,
+          descrption,
+          jobDate,
+          link,
+        ],
       ],
     },
   });
