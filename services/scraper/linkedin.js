@@ -13,17 +13,18 @@ const scraper = new LinkedinScraper({
 
 module.exports.run = async (
   queries,
-  { onError, onEnd, onData, onInvalidSession }
+  {  onEnd, onData }
 ) => {
+  
   // Add listeners for scraper events
-  scraper.on(events.scraper.error, onError);
-
+/*   scraper.on(events.scraper.error, onError);
+ */
   scraper.on(events.scraper.end, onEnd);
 
   scraper.on(events.scraper.data, onData);
 
-  scraper.on(events.scraper.invalidSession, onInvalidSession);
-
+/*   scraper.on(events.scraper.invalidSession, onInvalidSession);
+ */
   // Run the scraper
   await scraper.run(
     // Run queries serially

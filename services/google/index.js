@@ -12,8 +12,8 @@ module.exports.writeFile = async ({
   link,
   title,
   company,
-  descrption,
-  jobDate,
+  description,
+  date,
 }) => {
   const authClientObject = await auth.getClient();
 
@@ -53,8 +53,8 @@ module.exports.writeFile = async ({
           query,
           company,
           title,
-          descrption,
-          jobDate,
+          description.replace('Show more','…'),
+          date,
           link,
         ],
       ],
