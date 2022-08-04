@@ -14,7 +14,7 @@ registerListeners(app);
 const startApp = async () => {
   try {
     await app.start(process.env.PORT);
-    
+
     console.log("⚡️ The App is running ⚡️");
   } catch (error) {
     console.error("🔪 Unable to start App: ", error);
