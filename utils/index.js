@@ -1,4 +1,4 @@
-module.exports.getKeywords = (text) =>
+const getKeywords = (text) =>
   text
     .toLowerCase()
     .split(/\band\b/)
@@ -19,4 +19,18 @@ module.exports.getKeywords = (text) =>
     .filter(Boolean);
 
 // prettier-ignore
-module.exports.formatToWrite = (text) => `[ ${text.map(x => Array.isArray(x) ? `[ ${x.join(", ")} ]` : x).join(", ")} ]`
+const formatToWrite = (text) => `[ ${text.map(x => Array.isArray(x) ? `[ ${x.join(", ")} ]` : x).join(", ")} ]`
+
+const combine = ([head, ...[headTail, ...tailTail]]) => {
+  if (!headTail) return head;
+
+  const combined = headTail.reduce((acc, x) => acc.concat(head.map((h) => `${h}${x}`)), []);
+
+  return combine([combined, ...tailTail]);
+};
+
+module.exports = {
+  getKeywords,
+  formatToWrite,
+  combine,
+};
