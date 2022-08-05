@@ -6,15 +6,7 @@ const auth = new google.auth.GoogleAuth({
   scopes: 'https://www.googleapis.com/auth/spreadsheets',
 });
 
-module.exports.writeFile = async ({
-  username,
-  query,
-  link,
-  title,
-  company,
-  description,
-  date,
-}) => {
+module.exports.writeFile = async ({ username, query, link, title, company, description, date }) => {
   const authClientObject = await auth.getClient();
 
   const googleSheetsInstance = google.sheets({
@@ -30,7 +22,7 @@ module.exports.writeFile = async ({
   });
   */
 
-  //Read from the spreadsheet
+  // Read from the spreadsheet
   /*
   const readData = await googleSheetsInstance.spreadsheets.values.get({
     auth, 
@@ -43,7 +35,7 @@ module.exports.writeFile = async ({
   await googleSheetsInstance.spreadsheets.values.append({
     auth,
     spreadsheetId: process.env.G_SHEET_ID,
-    range: 'Sheet1!A:H', //sheet name and range of cells
+    range: 'Sheet1!A:H', // sheet name and range of cells
     valueInputOption: 'USER_ENTERED', // The information will be passed according to what the usere passes in as date, number or text
     resource: {
       values: [
@@ -53,7 +45,7 @@ module.exports.writeFile = async ({
           query,
           company,
           title,
-          description.replace('Show more','…'),
+          description.replace('Show more', '…'),
           date,
           link,
         ],

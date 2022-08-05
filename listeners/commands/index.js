@@ -1,5 +1,5 @@
-const find = require("./find");
+const find = require('./find');
 
 module.exports.register = (app) => {
-  app.command("/find", find);
+  app.command('/find', find);
 };

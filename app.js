@@ -1,5 +1,5 @@
-const { App } = require("@slack/bolt");
-const { registerListeners } = require("./listeners");
+const { App } = require('@slack/bolt');
+const { registerListeners } = require('./listeners');
 
 // Create App instance
 const app = new App({
@@ -15,9 +15,9 @@ const startApp = async () => {
   try {
     await app.start(process.env.PORT);
 
-    console.log("⚡️ The App is running ⚡️");
+    console.log('⚡️ The App is running ⚡️');
   } catch (error) {
-    console.error("🔪 Unable to start App: ", error);
+    console.error('🔪 Unable to start App: ', error);
   }
 };
 

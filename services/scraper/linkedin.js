@@ -1,21 +1,11 @@
-const {
-  LinkedinScraper,
-  relevanceFilter,
-  typeFilter,
-  remoteFilter,
-  events,
-} = require("linkedin-jobs-scraper");
+const { LinkedinScraper, relevanceFilter, remoteFilter, events } = require('linkedin-jobs-scraper');
 
 const scraper = new LinkedinScraper({
   headless: true,
   slowMo: 300,
 });
 
-module.exports.run = async (
-  queries,
-  {  onEnd, onData, onInvalidSession }
-) => {
-  
+module.exports.run = async (queries, { onEnd, onData, onInvalidSession }) => {
   // Add listeners for scraper events
 
   scraper.on(events.scraper.end, onEnd);
@@ -38,9 +28,9 @@ module.exports.run = async (
     })),
     // Global options, will be merged individually with each query options
     {
-      locations: ["United States"],
+      locations: ['United States'],
       limit: 1,
-    }
+    },
   );
 
   // Close browser

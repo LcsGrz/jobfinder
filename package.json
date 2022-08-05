@@ -40,7 +40,7 @@
     "*.{js,jsx,ts,tsx}": [
       "eslint --fix"
     ],
-    "*.{json}": [
+    "*.json": [
       "prettier --write"
     ]
   }
