@@ -4,12 +4,19 @@ const GSHEET = `https://docs.google.com/spreadsheets/d/${process.env.G_SHEET_ID}
 
 // prettier-ignore
 const formatToWrite = (text) => `[ ${text.map(x => Array.isArray(x) ? `[ ${x.join(", ")} ]` : x).join(", ")} ]`
+const reformatQueries = (parsedArray) => {
+  //[1,2,[3,4],5,[6,7]] => [1,2,3,5,6], [1,2,4,5,6] , [1,2,3,5,7], [1,2,4,5,7]
+  // new array ex = [1,2,,5,,] (in between "," fill with "or" samples) 
+  // OrsArray = [,,[3,4],[6,7]]
+  // query= [1,2,[OrsArray[thisArrayIndex(2)][i]]],5,[OrsArray[thisArrayIndex(6)][i]]]]
+}
 
 module.exports = async ({
   command: { text, user_name, user_id },
   ack,
   respond,
 }) => {
+  let tmp = 0;
   if (!text)
     // Incorrect recognition command request
     return ack({
@@ -43,9 +50,11 @@ module.exports = async ({
     })
     .filter(Boolean);
 
+  
+
   linkedinScraper.run(['react nodejs', 'mongodb graphql'], {
     onData: async (data) => {
-      console.log('\n\n', '# data', data, '\n\n');
+      tmp =+ 1;
       await google.writeFile({
         username: user_name,
         ...data,
@@ -59,13 +68,19 @@ module.exports = async ({
 
       await respond({
         response_type: 'in_channel',
-        text: `✅ Linkedin: se encontraron resultados`,
+        text: `✅ Linkedin: se encontraron ${tmp} resultados`,
       });
 
       await respond({
         response_type: 'in_channel',
         text: `Verifique los resultados desde este enlace: ${GSHEET}`,
       });
+    },
+    onInvalidSession: async() => {
+      await respond({
+        response_type: 'in_channel',
+        text: `Sesion Invalida, porfavor intentelo de nuevo en unos minutos.`
+      })
     },
   });
 };
