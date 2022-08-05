@@ -1,9 +1,8 @@
 const { google, linkedinScraper } = require('../../services');
+const { getKeywords, formatToWrite } = require('../../utils');
 
 const GSHEET = `https://docs.google.com/spreadsheets/d/${process.env.G_SHEET_ID}`;
 
-// prettier-ignore
-const formatToWrite = (text) => `[ ${text.map(x => Array.isArray(x) ? `[ ${x.join(", ")} ]` : x).join(", ")} ]`
 const reformatQueries = (parsedArray) => {
   // [1,2,[3,4],5,[6,7]] => [1,2,3,5,6], [1,2,4,5,6] , [1,2,3,5,7], [1,2,4,5,7]
   // new array ex = [1,2,,5,,] (in between "," fill with "or" samples)
@@ -12,67 +11,63 @@ const reformatQueries = (parsedArray) => {
 };
 
 module.exports = async ({ command: { text, user_name, user_id }, ack, respond }) => {
-  let tmp = 0;
-  if (!text)
+  if (!text) {
     // Incorrect recognition command request
-    return ack({
+    ack({
       response_type: 'ephemeral',
       text: `<@${user_id}> El comando no puede funcionar sin keywords.`,
     });
+  } else {
+    // Correct recognition command request
+    ack();
 
-  // Correct recognition command request
-  ack();
+    let totalJobs = 0;
 
-  await respond(`<@${user_id}> empezare con la busqueda, los publicare en el chat...`);
+    await respond(`<@${user_id}> empezare con la busqueda, los publicare en el chat...`);
 
-  const keywords = text
-    .toLowerCase()
-    .split(/\band\b/)
-    .map((x) => {
-      if (x.match(/\bor\b/)) {
-        const or = x
-          .split(/\bor\b/)
-          .map((z) => z.trim())
-          .filter(Boolean);
+    linkedinScraper.run(['react nodejs', 'mongodb graphql'], {
+      onData: async (data) => {
+        totalJobs += 1;
 
-        if (or.length <= 1) return or.pop();
+        await google.writeFile({
+          username: user_name,
+          ...data,
+        });
+      },
+      onEnd: async () => {
+        await respond({
+          response_type: 'in_channel',
+          text: `Se buscaron puestos de trabajo con el siguiente predicado '${text}'`,
+        });
 
-        return or;
-      }
+        if (totalJobs) {
+          await respond({
+            response_type: 'in_channel',
+            text: `✅ Linkedin: se encontraron ${totalJobs} resultados`,
+          });
 
-      return x.trim();
-    })
-    .filter(Boolean);
+          await respond({
+            response_type: 'in_channel',
+            text: `Verifique los resultados desde este enlace: ${GSHEET}`,
+          });
+        } else {
+          await respond({
+            response_type: 'in_channel',
+            text: `🚫 Linkedin: no se encontraron resultados`,
+          });
 
-  linkedinScraper.run(['react nodejs', 'mongodb graphql'], {
-    onData: async (data) => {
-      tmp = +1;
-      await google.writeFile({
-        username: user_name,
-        ...data,
-      });
-    },
-    onEnd: async () => {
-      await respond({
-        response_type: 'in_channel',
-        text: `Se buscaron puestos de trabajo con el siguiente predicado '${text}'`,
-      });
-
-      await respond({
-        response_type: 'in_channel',
-        text: `✅ Linkedin: se encontraron ${tmp} resultados`,
-      });
-
-      await respond({
-        response_type: 'in_channel',
-        text: `Verifique los resultados desde este enlace: ${GSHEET}`,
-      });
-    },
-    onInvalidSession: async () => {
-      await respond({
-        response_type: 'in_channel',
-        text: `Sesion Invalida, porfavor intentelo de nuevo en unos minutos.`,
-      });
-    },
-  });
+          await respond({
+            response_type: 'in_channel',
+            text: `Intente con otras palabras claves`,
+          });
+        }
+      },
+      onInvalidSession: async () => {
+        await respond({
+          response_type: 'in_channel',
+          text: `Sesion Invalida, porfavor intentelo de nuevo en unos minuto´s.`,
+        });
+      },
+    });
+  }
 };

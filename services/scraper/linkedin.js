@@ -7,7 +7,6 @@ const scraper = new LinkedinScraper({
 
 module.exports.run = async (queries, { onEnd, onData, onInvalidSession }) => {
   // Add listeners for scraper events
-
   scraper.on(events.scraper.end, onEnd);
 
   scraper.on(events.scraper.data, onData);
