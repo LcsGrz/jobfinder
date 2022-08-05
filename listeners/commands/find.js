@@ -1,14 +1,7 @@
 const { google, linkedinScraper } = require('../../services');
-const { getKeywords, formatToWrite } = require('../../utils');
+const { getKeywords, formatToWrite, combine } = require('../../utils');
 
 const GSHEET = `https://docs.google.com/spreadsheets/d/${process.env.G_SHEET_ID}`;
-
-const reformatQueries = (parsedArray) => {
-  // [1,2,[3,4],5,[6,7]] => [1,2,3,5,6], [1,2,4,5,6] , [1,2,3,5,7], [1,2,4,5,7]
-  // new array ex = [1,2,,5,,] (in between "," fill with "or" samples)
-  // OrsArray = [,,[3,4],[6,7]]
-  // query= [1,2,[OrsArray[thisArrayIndex(2)][i]]],5,[OrsArray[thisArrayIndex(6)][i]]]]
-};
 
 module.exports = async ({ command: { text, user_name, user_id }, ack, respond }) => {
   if (!text) {
@@ -25,8 +18,25 @@ module.exports = async ({ command: { text, user_name, user_id }, ack, respond })
 
     await respond(`<@${user_id}> empezare con la busqueda, los publicare en el chat...`);
 
-    linkedinScraper.run(['react nodejs', 'mongodb graphql'], {
+    const keywords = getKeywords(text);
+    let queries = [];
+   const filteredOrs = keywords.filter(Array.isArray);
+    if (filteredOrs.length) {
+     const combinedResults = combine(filteredOrs);
+     queries = combinedResults.map((cr) => {
+      const splitedCR = cr.split('-');
+      let cont = 0;
+      return keywords.reduce((acc = '', x = '') => {
+        if (!Array.isArray(x)) return `${acc} ${x}`;
+        return `${acc} ${splitedCR[cont++]}`;
+      }, []);
+    })}else {
+      queries = [keywords.join(' ')];
+    }
+    
+    linkedinScraper.run(queries, {
       onData: async (data) => {
+        console.log(data)
         totalJobs += 1;
 
         await google.writeFile({

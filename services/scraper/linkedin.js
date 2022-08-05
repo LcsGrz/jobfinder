@@ -2,7 +2,7 @@ const { LinkedinScraper, relevanceFilter, remoteFilter, events } = require('link
 
 const scraper = new LinkedinScraper({
   headless: true,
-  slowMo: 300,
+  slowMo: 1000,
 });
 
 module.exports.run = async (queries, { onEnd, onData, onInvalidSession }) => {
@@ -27,8 +27,9 @@ module.exports.run = async (queries, { onEnd, onData, onInvalidSession }) => {
     })),
     // Global options, will be merged individually with each query options
     {
+      optimize: true,
       locations: ['United States'],
-      limit: 1,
+      limit: 20,
     },
   );
 
