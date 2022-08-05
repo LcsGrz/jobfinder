@@ -13,6 +13,7 @@
   "rules": {
     "prettier/prettier": 1,
     "camelcase": 0,
+    "no-plusplus": 0,
     "no-unused-vars": 1
   }
 }

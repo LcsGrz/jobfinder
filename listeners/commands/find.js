@@ -1,5 +1,5 @@
 const { google, linkedinScraper } = require('../../services');
-const { getKeywords, formatToWrite, combine } = require('../../utils');
+const { getKeywords, combine } = require('../../utils');
 
 const GSHEET = `https://docs.google.com/spreadsheets/d/${process.env.G_SHEET_ID}`;
 
@@ -14,29 +14,33 @@ module.exports = async ({ command: { text, user_name, user_id }, ack, respond })
     // Correct recognition command request
     ack();
 
+    const start = Date.now();
     let totalJobs = 0;
+    let queries = [];
 
     await respond(`<@${user_id}> empezare con la busqueda, los publicare en el chat...`);
 
     const keywords = getKeywords(text);
-    let queries = [];
-   const filteredOrs = keywords.filter(Array.isArray);
+    const filteredOrs = keywords.filter(Array.isArray);
+
     if (filteredOrs.length) {
-     const combinedResults = combine(filteredOrs);
-     queries = combinedResults.map((cr) => {
-      const splitedCR = cr.split('-');
-      let cont = 0;
-      return keywords.reduce((acc = '', x = '') => {
-        if (!Array.isArray(x)) return `${acc} ${x}`;
-        return `${acc} ${splitedCR[cont++]}`;
-      }, []);
-    })}else {
+      const combinedResults = combine(filteredOrs);
+
+      queries = combinedResults.map((cr) => {
+        const splitedCR = cr.split('-');
+        let cont = 0;
+
+        return keywords.reduce((acc = '', x = '') => {
+          if (!Array.isArray(x)) return `${acc} ${x}`;
+          return `${acc} ${splitedCR[cont++]}`;
+        }, []);
+      });
+    } else {
       queries = [keywords.join(' ')];
     }
-    
+
     linkedinScraper.run(queries, {
       onData: async (data) => {
-        console.log(data)
         totalJobs += 1;
 
         await google.writeFile({
@@ -51,9 +55,10 @@ module.exports = async ({ command: { text, user_name, user_id }, ack, respond })
         });
 
         if (totalJobs) {
+          const end = Date.now();
           await respond({
             response_type: 'in_channel',
-            text: `✅ Linkedin: se encontraron ${totalJobs} resultados`,
+            text: `✅ Linkedin: se encontraron ${totalJobs} resultados en ${Math.floor((end - start / 1000) % 60)}s`,
           });
 
           await respond({
