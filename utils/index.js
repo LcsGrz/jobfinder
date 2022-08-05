@@ -24,7 +24,7 @@ const formatToWrite = (text) => `[ ${text.map(x => Array.isArray(x) ? `[ ${x.joi
 const combine = ([head, ...[headTail, ...tailTail]]) => {
   if (!headTail) return head;
 
-  const combined = headTail.reduce((acc, x) => acc.concat(head.map((h) => `${h}${x}`)), []);
+  const combined = headTail.reduce((acc, x) => acc.concat(head.map((h) => `${h} ${x}`)), []);
 
   return combine([combined, ...tailTail]);
 };
