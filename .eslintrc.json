@@ -10,5 +10,9 @@
   "parserOptions": {
     "ecmaVersion": "latest"
   },
-  "rules": { "prettier/prettier": 1 }
+  "rules": {
+    "prettier/prettier": 1,
+    "camelcase": 0,
+    "no-unused-vars": 1
+  }
 }
