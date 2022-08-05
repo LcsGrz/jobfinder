@@ -5,8 +5,14 @@
   "description": "A job finder for us",
   "main": "app.js",
   "scripts": {
+    "clean-modules": "rm -rf node_modules/ && yarn cache clean && yarn install",
+    "eslint-fix-all": "eslint --fix './**/*.{js,jsx,ts,tsx,json}'",
+    "prettier-fix-all": "prettier --write './**/*.{js,jsx,ts,tsx,json}'",
+    "eslint-check-all": "eslint './**/*.{js,jsx,ts,tsx,json}'",
+    "prettier-check-all": "prettier --check './**/*.{js,jsx,ts,tsx,json}'",
     "start": "node -r dotenv/config app.js",
-    "nstart": "nodemon -r dotenv/config app.js"
+    "nstart": "nodemon -r dotenv/config app.js",
+    "pre-commit": "lint-staged"
   },
   "engines": {
     "node": "16.x"
@@ -20,6 +26,22 @@
     "linkedin-jobs-scraper": "^13.0.0"
   },
   "devDependencies": {
-    "prettier": "2.7.1"
+    "eslint": "^8.21.0",
+    "eslint-config-airbnb-base": "^15.0.0",
+    "eslint-config-prettier": "^8.5.0",
+    "eslint-plugin-import": "^2.25.2",
+    "eslint-plugin-json": "^3.1.0",
+    "eslint-plugin-prettier": "^4.2.1",
+    "husky": "^8.0.1",
+    "lint-staged": "^13.0.3",
+    "prettier": "^2.7.1"
+  },
+  "lint-staged": {
+    "*.{js,jsx,ts,tsx}": [
+      "eslint --fix"
+    ],
+    "*.{json}": [
+      "prettier --write"
+    ]
   }
 }
