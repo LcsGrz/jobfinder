@@ -58,7 +58,7 @@ module.exports = async ({ command: { text, user_name, user_id }, ack, respond })
           const end = Date.now();
           await respond({
             response_type: 'in_channel',
-            text: `✅ Linkedin: se encontraron ${totalJobs} resultados en ${Math.floor((end - start / 1000) % 60)}s`,
+            text: `✅ Linkedin: se encontraron ${totalJobs} resultados en ${Math.floor((end - start ) / 1000)}s`,
           });
 
           await respond({
