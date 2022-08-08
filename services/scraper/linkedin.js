@@ -5,15 +5,15 @@ const scraper = new LinkedinScraper({
   slowMo: 1000,
 });
 
-module.exports.run = async (queries) => {
-   return new Promise( async (resolve) => {
+module.exports.run = (queries) =>
+  new Promise((resolve) => {
     const start = Date.now();
     const data = [];
-  
+
     // Add listeners for scraper events
     scraper.on(events.scraper.end, () => {
       const end = Date.now();
-  
+
       resolve({
         source: 'LINKEDIN',
         data,
@@ -21,12 +21,12 @@ module.exports.run = async (queries) => {
         runTime: end - start,
       });
     });
-  
+
     scraper.on(events.scraper.data, (d) => data.push(d));
-  
+
     scraper.on(events.scraper.invalidSession, () => {
       const end = Date.now();
-  
+
       resolve({
         source: 'LINKEDIN',
         error: 'InvalidSession',
@@ -35,30 +35,26 @@ module.exports.run = async (queries) => {
         runTime: end - start,
       });
     });
-  
-    // Run the scraper
-    await scraper.run(
-      // Run queries serially
-      queries.map((q) => ({
-        query: q,
-        options: {
-          filters: {
-            relevance: relevanceFilter.RECENT,
-            remote: remoteFilter.REMOTE,
-          },
-        },
-      })),
-      // Global options, will be merged individually with each query options
-      {
-        optimize: true,
-        locations: ['United States'],
-        limit: 20,
-      },
-    );
-  
-    // Close browser
-    await scraper.close();
 
-  })
-  
-};
+    // Run the scraper and then close the browser
+    scraper
+      .run(
+        // Run queries serially
+        queries.map((q) => ({
+          query: q,
+          options: {
+            filters: {
+              relevance: relevanceFilter.RECENT,
+              remote: remoteFilter.REMOTE,
+            },
+          },
+        })),
+        // Global options, will be merged individually with each query options
+        {
+          optimize: true,
+          locations: ['United States'],
+          limit: 20,
+        },
+      )
+      .then(scraper.close);
+  });

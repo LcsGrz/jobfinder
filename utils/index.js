@@ -41,10 +41,13 @@ const getQueries = (text) => {
       const splitedCR = cr.split('-');
       let cont = 0;
 
-      return keywords.reduce((acc = '', x = '') => {
-        if (!Array.isArray(x)) return `${acc} ${x}`;
-        return `${acc} ${splitedCR[cont++]}`;
-      }, []).trim()
+      return keywords
+        .reduce((acc = '', x = '') => {
+          if (!Array.isArray(x)) return `${acc} ${x}`;
+
+          return `${acc} ${splitedCR[cont++]}`;
+        })
+        .trim();
     });
   } else {
     queries = [keywords.join(' ')];
