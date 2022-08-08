@@ -21,11 +21,8 @@ module.exports = async ({ command: { text, user_name }, ack, respond }) => {
 
     await respond(`Empezare con la busqueda, los publicare en el chat...`);
     const queries = getQueries(text);
-    const indeedData = await indeedScrapper.run(queries);
-    console.log(indeedData);
-    //const scrappersData = await Promise.all([linkedinScrapper.run(queries), indeedScrapper.run(queries)]);
+    const scrappersData = await Promise.all([linkedinScrapper.run(queries), indeedScrapper.run(queries)]);
 
-    /* 
     await respond({
       response_type: 'in_channel',
       text: `Se buscaron puestos de trabajo con el siguiente predicado '${text}'`,
@@ -68,6 +65,6 @@ module.exports = async ({ command: { text, user_name }, ack, respond }) => {
     await respond({
       response_type: 'in_channel',
       text: `La tarea se completo en ${msToSeconds(totalRunTime)}s con ${totalResults} resultados`,
-    }); */
+    });
   }
 };

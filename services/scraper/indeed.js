@@ -19,7 +19,15 @@ module.exports.run = async (queries) => {
             maxPerPage: 20, // Total amount will be 'maxPerPage x max-pages' from config
           });
 
-          return searchData.map((job) => ({ ...job, query }));
+          return searchData.map((job) => ({
+            title: job['job-title'],
+            company: job['job-title'],
+            place: '-',
+            description: job['job-snippet'],
+            date: job['post-date'],
+            link: job['job-link'],
+            query,
+          }));
         }),
       )
     ).flat();
