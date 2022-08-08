@@ -22,7 +22,9 @@ module.exports.run = (queries) =>
       });
     });
 
-    scraper.on(events.scraper.data, (d) => data.push(d));
+    scraper.on(events.scraper.data, (job) =>
+      data.push({ ...job, description: job.description.replace('Show more', '…') }),
+    );
 
     scraper.on(events.scraper.invalidSession, () => {
       const end = Date.now();

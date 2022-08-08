@@ -42,9 +42,8 @@ module.exports = async ({ command: { text, user_name }, ack, respond }) => {
             respond({
               response_type: 'in_channel',
               text:
-                `✅ Linkedin: se encontraron ${total} resultados en ${msToSeconds(runTime)}s.` +
-                `\n\n` +
-                `Verifique los resultados desde este <${SHEETS_ID[source]}|enlace>`,
+                `✅ ${source}: se encontraron ${total} resultados en ${msToSeconds(runTime)}s. ` +
+                `<${SHEETS_ID[source]}|Click para ver>`,
             });
           } else {
             respond({

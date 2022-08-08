@@ -21,19 +21,17 @@ module.exports.writeFile = async ({ source, username, data }) => {
     range: `${source}!A:I`, // sheet name and range of cells
     valueInputOption: 'USER_ENTERED', // The information will be passed according to what the usere passes in as date, number or text
     resource: {
-      values: [
-        data.map(({ query, link, title, company, place, description, date }) => [
-          new Date().toLocaleDateString(),
-          username,
-          query,
-          title,
-          company,
-          place,
-          description.replace('Show more', '…'),
-          date,
-          link,
-        ]),
-      ],
+      values: data.map(({ query, link, title, company, place, description, date }) => [
+        new Date().toLocaleDateString(),
+        username,
+        query,
+        title,
+        company,
+        place,
+        description,
+        date,
+        link,
+      ]),
     },
   });
 };
