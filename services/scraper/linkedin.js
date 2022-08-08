@@ -5,13 +5,35 @@ const scraper = new LinkedinScraper({
   slowMo: 1000,
 });
 
-module.exports.run = async (queries, { onEnd, onData, onInvalidSession }) => {
+module.exports.run = async (queries) => {
+  const start = Date.now();
+  const data = [];
+
   // Add listeners for scraper events
-  scraper.on(events.scraper.end, onEnd);
+  scraper.on(events.scraper.end, () => {
+    const end = Date.now();
 
-  scraper.on(events.scraper.data, onData);
+    Promise.resolve({
+      source: 'LINKEDIN',
+      data,
+      total: data.length,
+      runTime: start - end,
+    });
+  });
 
-  scraper.on(events.scraper.invalidSession, onInvalidSession);
+  scraper.on(events.scraper.data, data.push);
+
+  scraper.on(events.scraper.invalidSession, () => {
+    const end = Date.now();
+
+    Promise.resolve({
+      source: 'LINKEDIN',
+      error: 'InvalidSession',
+      data: [],
+      total: 0,
+      runTime: start - end,
+    });
+  });
 
   // Run the scraper
   await scraper.run(

@@ -29,8 +29,36 @@ const combine = ([head, ...[headTail, ...tailTail]]) => {
   return combine([combined, ...tailTail]);
 };
 
+const getQueries = (text) => {
+  let queries = [];
+  const keywords = getKeywords(text);
+  const filteredOrs = keywords.filter(Array.isArray);
+
+  if (filteredOrs.length) {
+    const combinedResults = combine(filteredOrs);
+
+    queries = combinedResults.map((cr) => {
+      const splitedCR = cr.split('-');
+      let cont = 0;
+
+      return keywords.reduce((acc = '', x = '') => {
+        if (!Array.isArray(x)) return `${acc} ${x}`;
+        return `${acc} ${splitedCR[cont++]}`;
+      }, []);
+    });
+  } else {
+    queries = [keywords.join(' ')];
+  }
+
+  return queries;
+};
+
+const msToSeconds = (milis) => Math.floor(milis / 1000);
+
 module.exports = {
   getKeywords,
   formatToWrite,
   combine,
+  getQueries,
+  msToSeconds,
 };
