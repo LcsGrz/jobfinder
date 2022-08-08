@@ -23,7 +23,7 @@ module.exports = async ({ command: { text, user_name }, ack, respond }) => {
     const queries = getQueries(text);
     const indeedData = await indeedScrapper.run(queries);
     console.log(indeedData);
-    //const scrappersData = await Promise.all([linkedinScrapper.run(queries)]);
+    //const scrappersData = await Promise.all([linkedinScrapper.run(queries), indeedScrapper.run(queries)]);
 
     /* 
     await respond({
