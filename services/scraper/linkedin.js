@@ -6,55 +6,59 @@ const scraper = new LinkedinScraper({
 });
 
 module.exports.run = async (queries) => {
-  const start = Date.now();
-  const data = [];
-
-  // Add listeners for scraper events
-  scraper.on(events.scraper.end, () => {
-    const end = Date.now();
-
-    Promise.resolve({
-      source: 'LINKEDIN',
-      data,
-      total: data.length,
-      runTime: start - end,
+   return new Promise( async (resolve) => {
+    const start = Date.now();
+    const data = [];
+  
+    // Add listeners for scraper events
+    scraper.on(events.scraper.end, () => {
+      const end = Date.now();
+  
+      resolve({
+        source: 'LINKEDIN',
+        data,
+        total: data.length,
+        runTime: end - start,
+      });
     });
-  });
-
-  scraper.on(events.scraper.data, data.push);
-
-  scraper.on(events.scraper.invalidSession, () => {
-    const end = Date.now();
-
-    Promise.resolve({
-      source: 'LINKEDIN',
-      error: 'InvalidSession',
-      data: [],
-      total: 0,
-      runTime: start - end,
+  
+    scraper.on(events.scraper.data, (d) => data.push(d));
+  
+    scraper.on(events.scraper.invalidSession, () => {
+      const end = Date.now();
+  
+      resolve({
+        source: 'LINKEDIN',
+        error: 'InvalidSession',
+        data: [],
+        total: 0,
+        runTime: end - start,
+      });
     });
-  });
-
-  // Run the scraper
-  await scraper.run(
-    // Run queries serially
-    queries.map((q) => ({
-      query: q,
-      options: {
-        filters: {
-          relevance: relevanceFilter.RECENT,
-          remote: remoteFilter.REMOTE,
+  
+    // Run the scraper
+    await scraper.run(
+      // Run queries serially
+      queries.map((q) => ({
+        query: q,
+        options: {
+          filters: {
+            relevance: relevanceFilter.RECENT,
+            remote: remoteFilter.REMOTE,
+          },
         },
+      })),
+      // Global options, will be merged individually with each query options
+      {
+        optimize: true,
+        locations: ['United States'],
+        limit: 20,
       },
-    })),
-    // Global options, will be merged individually with each query options
-    {
-      optimize: true,
-      locations: ['United States'],
-      limit: 20,
-    },
-  );
+    );
+  
+    // Close browser
+    await scraper.close();
 
-  // Close browser
-  await scraper.close();
+  })
+  
 };

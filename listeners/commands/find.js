@@ -61,8 +61,8 @@ module.exports = async ({ command: { text, user_name }, ack, respond }) => {
       }
     });
 
-    const totalRunTime = scrappersData.reduce((acc, ac) => acc.runTime + ac.runTime, [{ runTime: 0 }]);
-    const totalResults = scrappersData.reduce((acc, ac) => acc.total + ac.total, [{ total: 0 }]);
+    const totalRunTime = scrappersData.reduce((acc, ac) => acc.runTime + ac.runTime, { runTime: 0 });
+    const totalResults = scrappersData.reduce((acc, ac) => acc.total + ac.total, { total: 0 });
 
     await respond({
       response_type: 'in_channel',
