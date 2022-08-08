@@ -1,7 +1,9 @@
-const linkedinScraper = require('./scraper/linkedin');
+const linkedinScrapper = require('./scraper/linkedin');
+const indeedScrapper = require('./scraper/indeed');
 const google = require('./google');
 
 module.exports = {
-  linkedinScraper,
+  linkedinScrapper,
   google,
+  indeedScrapper,
 };

@@ -44,9 +44,8 @@ const getQueries = (text) => {
       return keywords
         .reduce((acc = '', x = '') => {
           if (!Array.isArray(x)) return `${acc} ${x}`;
-
           return `${acc} ${splitedCR[cont++]}`;
-        })
+        }, [])
         .trim();
     });
   } else {
