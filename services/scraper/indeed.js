@@ -6,24 +6,23 @@ module.exports.run = async (queries) => {
   const start = Date.now();
 
   try {
-    const data = await Promise.all(
-      queries.map(async (query) => {
-        const searchData = await getJobsList({
-          queryAll: query,
-          hireType: 'directhire',
-          location: 'remote',
-          sort: 'date',
-          fromDays: 15,
-          duplicated: 'unique',
-          maxPerPage: 20, // Total amount will be 'maxPerPage x max-pages' from config
-        });
+    const data = (
+      await Promise.all(
+        queries.map(async (query) => {
+          const searchData = await getJobsList({
+            queryAll: query,
+            hireType: 'directhire',
+            location: 'remote',
+            sort: 'date',
+            fromDays: 15,
+            duplicated: 'unique',
+            maxPerPage: 20, // Total amount will be 'maxPerPage x max-pages' from config
+          });
 
-        return {
-          ...searchData,
-          query,
-        };
-      }),
-    );
+          return searchData.map((job) => ({ ...job, query }));
+        }),
+      )
+    ).flat();
 
     const end = Date.now();
 
