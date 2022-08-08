@@ -55,7 +55,7 @@ module.exports.run = (queries) =>
         {
           optimize: true,
           locations: ['United States'],
-          limit: 2,
+          limit: 20,
         },
       )
       .then(scraper.close);
