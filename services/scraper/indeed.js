@@ -45,7 +45,7 @@ module.exports.run = async (queries) => {
 
     return {
       source: 'INDEED',
-      error,
+      error: error.message || 'desconocido',
       data: [],
       total: 0,
       runTime: end - start,
