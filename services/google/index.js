@@ -6,7 +6,7 @@ const auth = new google.auth.GoogleAuth({
   scopes: 'https://www.googleapis.com/auth/spreadsheets',
 });
 
-module.exports.writeFile = async ({ source, username, data }) => {
+module.exports.writeFile = async ({ source, username, data, searchTime }) => {
   const authClientObject = await auth.getClient();
 
   const googleSheetsInstance = google.sheets({
@@ -22,7 +22,7 @@ module.exports.writeFile = async ({ source, username, data }) => {
     valueInputOption: 'USER_ENTERED', // The information will be passed according to what the usere passes in as date, number or text
     resource: {
       values: data.map(({ query, link, title, company, place, description, date }) => [
-        new Date().toLocaleDateString(),
+        searchTime,
         username,
         query,
         title,
@@ -30,7 +30,7 @@ module.exports.writeFile = async ({ source, username, data }) => {
         place,
         description,
         date,
-        link,
+        `=HYPERLINK(${link}, NAVEGAR)`,
       ]),
     },
   });

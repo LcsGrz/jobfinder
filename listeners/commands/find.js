@@ -21,8 +21,10 @@ module.exports = async ({ command: { text, user_name }, ack, respond }) => {
       ack();
 
       await respond(`Empezare con la busqueda, los publicare en el chat...`);
+
       const queries = getQueries(text);
       const scrappersData = await Promise.all([linkedinScrapper.run(queries), indeedScrapper.run(queries)]);
+      const searchTime = new Date().toLocaleString();
 
       await respond({
         response_type: 'in_channel',
@@ -37,7 +39,7 @@ module.exports = async ({ command: { text, user_name }, ack, respond }) => {
               text: `🚫 ${source}: A ocurrido un error, porfavor intentelo de nuevo. ( ${error} )`,
             });
           } else if (total) {
-            google.writeFile({ source, username: user_name, data });
+            google.writeFile({ source, username: user_name, data, searchTime });
 
             respond({
               response_type: 'in_channel',
