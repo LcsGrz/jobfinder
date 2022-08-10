@@ -30,7 +30,7 @@ module.exports.writeFile = async ({ source, username, data, searchTime }) => {
         place,
         description,
         date,
-        `=HYPERLINK(${link}, NAVEGAR)`,
+        `=HYPERLINK("${link}", "NAVEGAR")`,
       ]),
     },
   });
