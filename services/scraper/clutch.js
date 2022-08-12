@@ -1,13 +1,18 @@
-module.exports.run = async (url) => {
-  const start = Date.now();
+const fetch = require('node-fetch');
 
+module.exports.run = async (url) => {
+  const formData = new URLSearchParams({
+    url_to_scrap: url,
+  });
+  const start = Date.now();
   try {
     const data = await fetch(process.env.CLUTCH_SCRAPER_API, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/x-www-form-urlencoded',
+        Accept: '*/*',
       },
-      body: JSON.stringify({ url_to_scrap: url }),
+      body: formData,
     });
 
     console.log('\n\n', '# data', data, '\n\n');

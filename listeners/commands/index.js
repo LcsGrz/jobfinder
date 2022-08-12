@@ -3,5 +3,5 @@ const clutch = require('./clutch');
 
 module.exports.register = (app) => {
   app.command('/find', find);
-  app.command('/clutch', clutch);
+  app.command('/tclutch', clutch);
 };
